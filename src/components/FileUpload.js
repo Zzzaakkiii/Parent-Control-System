@@ -6,6 +6,7 @@ function FileUpload() {
 
     function handleChange(event) {
         setFile(event.target.files[0])
+        console.log(file);
     }
 
     return (
