@@ -53,8 +53,8 @@ export default function LoginForm() {
       console.log(res)
       setRole(res.data.role);
       setToken(res.data.token);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
       navigate('/dashboard', { replace: true });
     }
   };
@@ -75,6 +75,8 @@ export default function LoginForm() {
       setError(true);
       setErrorMessage(err.response.data.msg);
     }
+
+    return 0;
   }
 
   return (
