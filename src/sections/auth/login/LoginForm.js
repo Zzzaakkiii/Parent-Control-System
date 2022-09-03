@@ -50,11 +50,12 @@ export default function LoginForm() {
 
     const res = await login(getValues());
     if (res) {
-      console.log(res)
-      setRole(res.data.role);
-      setToken(res.data.token);
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      setRole(res.data.data.role);
+      setToken(res.data.data.token);
+      localStorage.setItem("token", res.data.data.token);
+      localStorage.setItem("role", res.data.data.role);
+      console.log(token)
+      console.log(role);
       navigate('/dashboard', { replace: true });
     }
   };

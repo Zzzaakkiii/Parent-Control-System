@@ -45,7 +45,7 @@ export default function Router() {
     // },
     {
       path: '/',
-      element: token ? <Login /> : <DashboardLayout />
+      element: token === undefined || token === null || token === "" ? < Login /> : <DashboardLayout />
     },
     {
       path: '*',
