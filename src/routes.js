@@ -14,6 +14,7 @@ import DashboardApp from './pages/DashboardApp';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const token = localStorage.getItem("token");
   return useRoutes([
     {
       path: '/dashboard',
@@ -44,7 +45,7 @@ export default function Router() {
     // },
     {
       path: '/',
-      element: <Login />
+      element: token !== undefined && token !== "" ? <DashboardLayout /> : <Login />
     },
     {
       path: '*',

@@ -51,8 +51,10 @@ export default function LoginForm() {
     const res = await login(getValues());
     if (res) {
       console.log(res)
-      setRole(res.role);
-      setToken(res.token);
+      setRole(res.data.role);
+      setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
       navigate('/dashboard', { replace: true });
     }
   };
@@ -65,9 +67,8 @@ export default function LoginForm() {
 
     try {
       const response = await api.post("/auth/login", request);
-      if (!response.ok) {
-        throw new Error('Something went wrong');
-      }
+      setError(false);
+      setErrorMessage("");
       return response;
     }
     catch (err) {
