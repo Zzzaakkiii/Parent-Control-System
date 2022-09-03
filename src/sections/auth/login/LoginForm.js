@@ -16,9 +16,13 @@ import api from '../../../Services/ParentControlService';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState("");
+  const [role, setRole] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -44,8 +48,13 @@ export default function LoginForm() {
 
   const onSubmit = async () => {
 
-    const res = await login(getValues())
-    // navigate('/dashboard', { replace: true });
+    const res = await login(getValues());
+    if (res) {
+      console.log(res)
+      setRole(res.role);
+      setToken(res.token);
+      navigate('/dashboard', { replace: true });
+    }
   };
 
   const login = async (values) => {
@@ -54,9 +63,17 @@ export default function LoginForm() {
       password: values.password
     };
 
-    console.log(request)
-    const response = await api.post("/auth/login", request);
-    return response.data;
+    try {
+      const response = await api.post("/auth/login", request);
+      if (!response.ok) {
+        throw new Error('Something went wrong');
+      }
+      return response;
+    }
+    catch (err) {
+      setError(true);
+      setErrorMessage(err.response.data.msg);
+    }
   }
 
   return (
@@ -85,6 +102,7 @@ export default function LoginForm() {
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>
+      {error && <h4 style={{ color: "red", textAlign: "center", margin: "5px" }}>{errorMessage}</h4>}
     </FormProvider>
   );
 }
