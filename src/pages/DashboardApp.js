@@ -31,6 +31,8 @@ export default function DashboardApp() {
           Hi, Welcome back
         </Typography>
         <FileUpload />
+        <FileUpload />
+        <h2>hello</h2>
       </Container>
     </Page>
   );
