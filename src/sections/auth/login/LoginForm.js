@@ -11,10 +11,12 @@ import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 
+import api from '../../../Services/ParentControlService';
+
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,17 +33,31 @@ export default function LoginForm() {
 
   const methods = useForm({
     resolver: yupResolver(LoginSchema),
-    defaultValues,
+    defaultValues
   });
 
   const {
     handleSubmit,
     formState: { isSubmitting },
+    getValues,
   } = methods;
 
   const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
+
+    const res = await login(getValues())
+    // navigate('/dashboard', { replace: true });
   };
+
+  const login = async (values) => {
+    const request = {
+      email: values.email,
+      password: values.password
+    };
+
+    console.log(request)
+    const response = await api.post("/auth/login", request);
+    return response.data;
+  }
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
