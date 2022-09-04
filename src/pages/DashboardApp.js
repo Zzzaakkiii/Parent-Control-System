@@ -4,6 +4,7 @@
 import { Container, Typography } from '@mui/material';
 // components
 import FileUpload from '../components/FileUpload';
+import Table from './Table';
 import Page from '../components/Page';
 // import Iconify from '../components/Iconify';
 // // sections
@@ -32,7 +33,7 @@ export default function DashboardApp() {
         </Typography>
         <FileUpload />
         <FileUpload />
-        <h2>hello</h2>
+        <Table />
       </Container>
     </Page>
   );
