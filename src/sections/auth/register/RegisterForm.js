@@ -69,7 +69,7 @@ export default function RegisterForm() {
     };
 
     try {
-      const response = await api.post("/auth/signup", request);
+      const response = await api.post("v2/auth/signup", request);
       setError(false);
       setErrorMessage("");
       setSuccess(false);

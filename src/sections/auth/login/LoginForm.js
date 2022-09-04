@@ -67,7 +67,7 @@ export default function LoginForm() {
     };
 
     try {
-      const response = await api.post("/auth/login", request);
+      const response = await api.post("v1/auth/login", request);
       setError(false);
       setErrorMessage("");
       return response;
