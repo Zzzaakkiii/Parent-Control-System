@@ -24,10 +24,13 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
+  };
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     navigate('/login', { replace: true });
-  };
+  }
 
   return (
     <>
@@ -66,7 +69,7 @@ export default function AccountPopover() {
           },
         }}
       >
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={() => { handleClose(); handleLogout() }} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </MenuPopover>
