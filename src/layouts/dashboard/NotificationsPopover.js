@@ -42,7 +42,7 @@ export default function NotificationsPopover() {
   const [activityNotifications, setActivityNotifications] = useState([]);
 
   const changeTimer = () => {
-    if (timer < 10000) timer *= 10;
+    if (timer < 100000) timer *= 2;
   }
 
   useEffect(() => {
