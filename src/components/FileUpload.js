@@ -10,13 +10,15 @@ const FileUpload = () => {
     const [files, setFiles] = React.useState([]);
     const updateFiles = (incommingFiles) => {
         setFiles(incommingFiles);
+        const formData = new FormData();
+        formData.append("file", incommingFiles[0].file);
+        formData.append("name", incommingFiles[0].file.name);
+
         const uploadFile = async () => {
             try {
-                const data = await api.post("v1/add/file", incommingFiles[0].file, {
+                const data = await api.post("v1/add/file", formData, {
                     headers: {
-                        authorization: 'Bearer '.concat(_token),
-                        "Access-Control-Allow-Origin": "*",
-                        'Content-Type': 'text/plain'
+                        authorization: 'Bearer '.concat(_token)
                     },
                 });
 

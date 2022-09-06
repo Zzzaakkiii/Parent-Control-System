@@ -54,7 +54,7 @@ export default function User({ token }) {
     }
 
     fetchLatestLogins()
-  })
+  }, [token])
 
   return (
     <Page title="User">

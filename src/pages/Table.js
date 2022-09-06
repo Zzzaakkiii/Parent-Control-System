@@ -52,8 +52,9 @@ export default function BasicTable({ token }) {
         };
     })
 
-    const openInNewTab = url => {
+    const openInNewTab = (url, name) => {
         window.open(url, '_blank', 'noopener,noreferrer');
+        logActivity("view", name);
     };
 
     const saveFile = (url, name) => {
@@ -61,7 +62,24 @@ export default function BasicTable({ token }) {
             url,
             name
         );
+
+        logActivity("download", name);
     };
+
+    const logActivity = async (action, name) => {
+        const request = {
+            activity: action,
+            file_name: name
+        };
+
+        const data = await api.post("v1/notify", request, {
+            headers: {
+                authorization: 'Bearer '.concat(token),
+            },
+        });
+
+        return data;
+    }
 
     return (
         <Container>
@@ -89,7 +107,7 @@ export default function BasicTable({ token }) {
                                 {row.file_name}
                             </TableCell>
                             <TableCell align="right">
-                                <Button onClick={() => openInNewTab(row.url)}>
+                                <Button onClick={() => openInNewTab(row.url, row.file_name)}>
                                     View
                                 </Button>
                             </TableCell>
