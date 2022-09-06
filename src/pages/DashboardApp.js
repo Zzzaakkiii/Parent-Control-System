@@ -1,6 +1,4 @@
-// import { faker } from '@faker-js/faker';
-// @mui
-// import { useTheme } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
 import { Container, Typography } from '@mui/material';
 // components
 import FileUpload from '../components/FileUpload';
@@ -14,7 +12,11 @@ import User from './User';
 const _role = localStorage.getItem("role");
 
 export default function DashboardApp() {
-  // const theme = useTheme();
+  const [temp, setTemp] = useState()
+  useEffect(() => {
+    setTemp(_role);
+    console.log(temp)
+  }, [temp])
 
   return (
     <Page title="Dashboard" style={{ backgroundColor: "##e8f9fd" }}>
