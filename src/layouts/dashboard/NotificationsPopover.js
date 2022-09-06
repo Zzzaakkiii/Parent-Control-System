@@ -1,21 +1,24 @@
 import PropTypes from 'prop-types';
-import { noCase } from 'change-case';
-import { useState, useRef, useEffect } from 'react';
+import { React, useState, useRef, useEffect, forwardRef } from 'react';
 // @mui
 import {
   Box,
-  List,
   Badge,
-  Button,
-  Avatar,
   Tooltip,
   Divider,
   Typography,
   IconButton,
-  ListItemText,
+  List,
   ListSubheader,
-  ListItemAvatar,
+  ListItemText,
   ListItemButton,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide
 } from '@mui/material';
 // utils
 import { fToNow } from '../../utils/formatTime';
@@ -27,39 +30,39 @@ import MenuPopover from '../../components/MenuPopover';
 import api from '../../Services/ParentControlService';
 // ----------------------------------------------------------------------
 
-const NOTIFICATIONS = [
-
-];
-
-const _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMDYxY2NiNjgwNWU5ZTI4MjE3ODM1YyIsImVtYWlsIjoiSGFtemFyYWZpcTMyMTJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjYyMjgxNDg0fQ.rr2YDUxoOWUVai2LWq0VA12SpudlEJjZq3S-Tn5Vvys"
-// const _token = localStorage.getItem("token");
+const _token = localStorage.getItem("token");
+let timer = 1000;
 
 export default function NotificationsPopover() {
   const anchorRef = useRef(null);
 
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
+
+  const changeTimer = () => {
+    if (timer < 100000) timer *= 10;
+  }
 
   useEffect(() => {
+    const fetchNotifications = async () => {
+      const data = await api.get("v2/unverified/users", {
+        headers: {
+          authorization: 'Bearer '.concat(_token),
+        },
+      });
+      setNotifications(data.data.msg);
+    }
 
     const interval = setInterval(() => {
-      const fetchNotifications = async () => {
-        const data = await api.get("v2/unverified/users", {
-          headers: {
-            'Authorization': _token
-          }
-        });
-        console.log(data)
-      }
-
       fetchNotifications();
-    }, 10000);
+      changeTimer();
+    }, timer);
 
     return () => {
       clearInterval(interval);
     };
-  }, [])
+  })
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const totalUnRead = notifications.length;
 
   const [open, setOpen] = useState(null);
 
@@ -127,32 +130,11 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
-
-          <List
-            disablePadding
-            subheader={
-              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
-              </ListSubheader>
-            }
-          >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+            {notifications.map((notification) => (
+              <NotificationItem key={notification._id} notification={notification} />
             ))}
           </List>
         </Scrollbar>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            View All
-          </Button>
-        </Box>
       </MenuPopover>
     </>
   );
@@ -162,18 +144,60 @@ export default function NotificationsPopover() {
 
 NotificationItem.propTypes = {
   notification: PropTypes.shape({
-    createdAt: PropTypes.instanceOf(Date),
-    id: PropTypes.string,
-    isUnRead: PropTypes.bool,
-    title: PropTypes.string,
-    description: PropTypes.string,
-    type: PropTypes.string,
-    avatar: PropTypes.any,
+    created_at: PropTypes.string,
+    email: PropTypes.string,
+    first_name: PropTypes.string,
+    is_admin_verified: PropTypes.string,
+    is_blocked: PropTypes.bool,
+    is_email_verification_on: PropTypes.bool,
+    is_google_authentication_on: PropTypes.bool,
+    last_login: PropTypes.string,
+    last_name: PropTypes.string,
+    role: PropTypes.string,
+    updated_at: PropTypes.string,
+    _id: PropTypes.string,
   }),
 };
 
+const Transition = forwardRef((props, ref) =>
+  <Slide direction="up" ref={ref} {...props} />
+);
+
 function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
+  const [openModal, setOPenModal] = useState(false);
+
+  const handleModalOpen = () => {
+    setOPenModal(true);
+  };
+
+  const handleModalClose = () => {
+    setOPenModal(false);
+  };
+
+  const handleApproval = decision => {
+    const approve = async () => {
+      const request = {
+        status: decision,
+        id: notification._id,
+      };
+
+      try {
+        const data = await api.put("v2/update/user/status", request, {
+          headers: {
+            authorization: 'Bearer '.concat(_token),
+          }
+        });
+        return data;
+      }
+      catch (err) {
+        console.log(err)
+      }
+
+      return 0;
+    }
+    approve();
+    handleModalClose();
+  }
 
   return (
     <ListItemButton
@@ -181,16 +205,11 @@ function NotificationItem({ notification }) {
         py: 1.5,
         px: 2.5,
         mt: '1px',
-        ...(notification.isUnRead && {
-          bgcolor: 'action.selected',
-        }),
       }}
+      onClick={(e) => { e.preventDefault(); handleModalOpen(); }}
     >
-      <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
-      </ListItemAvatar>
       <ListItemText
-        primary={title}
+        primary={`${notification.is_admin_verified} approval for new user: ${notification.first_name}`}
         secondary={
           <Typography
             variant="caption"
@@ -202,52 +221,34 @@ function NotificationItem({ notification }) {
             }}
           >
             <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {fToNow(notification.createdAt)}
+            {fToNow(notification.created_at)}
           </Typography>
         }
       />
+
+      <Dialog
+        open={openModal}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleModalClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{`Approve Signup for ${notification.first_name}`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            <span>A new SignUp request has been recieved</span><br />
+            <span>Email: {notification.email}</span>
+
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleApproval("rejected")}>Reject</Button>
+          <Button onClick={() => handleApproval("approved")}>Approve</Button>
+        </DialogActions>
+      </Dialog>
     </ListItemButton>
   );
 }
 
 // ----------------------------------------------------------------------
 
-function renderContent(notification) {
-  const title = (
-    <Typography variant="subtitle2">
-      {notification.title}
-      <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
-      </Typography>
-    </Typography>
-  );
-
-  if (notification.type === 'order_placed') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'mail') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
-      title,
-    };
-  }
-  if (notification.type === 'chat_message') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
-      title,
-    };
-  }
-  return {
-    avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
-    title,
-  };
-}

@@ -6,6 +6,7 @@ import { Container, Typography } from '@mui/material';
 import FileUpload from '../components/FileUpload';
 import Table from './Table';
 import Page from '../components/Page';
+import User from './User';
 // import Iconify from '../components/Iconify';
 // // sections
 // import {
@@ -32,8 +33,8 @@ export default function DashboardApp() {
           Hi, Welcome back
         </Typography>
         <FileUpload />
-        <FileUpload />
         <Table />
+        <User />
       </Container>
     </Page>
   );
