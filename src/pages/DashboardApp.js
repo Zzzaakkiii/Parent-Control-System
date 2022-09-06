@@ -24,7 +24,7 @@ export default function DashboardApp() {
         </Typography>
         {_role === "admin" && <FileUpload />}
         <Table />
-        <User />
+        {_role === "admin" && <User />}
       </Container>
     </Page>
   );

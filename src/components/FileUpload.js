@@ -34,7 +34,7 @@ const FileUpload = () => {
     return (
         <>
             <h2>Upload new file to system</h2>
-            <Dropzone onChange={updateFiles} value={files} maxFiles={1} style={{ width: "40%", margin: "2em auto" }} >
+            <Dropzone onChange={updateFiles} value={files} style={{ width: "40%", margin: "2em auto" }} >
                 {files.map((file) => (
                     <FileItem {...file} preview key={uuid()} />
                 ))}
