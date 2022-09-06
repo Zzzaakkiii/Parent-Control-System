@@ -16,9 +16,14 @@ import { saveAs } from "file-saver";
 import api from '../Services/ParentControlService';
 
 const _token = localStorage.getItem("token");
+let timer = 1000;
 
 export default function BasicTable() {
     const [files, setFiles] = useState([]);
+
+    const changeTimer = () => {
+        if (timer < 100000) timer *= 100;
+    }
 
     useEffect(() => {
         const fetchFiles = async () => {
@@ -30,9 +35,15 @@ export default function BasicTable() {
             setFiles(data.data.msg)
         }
 
-        fetchFiles();
-        console.log(files)
-    }, [files])
+        const interval = setInterval(() => {
+            fetchFiles();
+            changeTimer();
+        }, timer);
+
+        return () => {
+            clearInterval(interval);
+        };
+    })
 
     const openInNewTab = url => {
         window.open(url, '_blank', 'noopener,noreferrer');
