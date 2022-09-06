@@ -18,6 +18,8 @@ import { UserListHead } from '../sections/@dashboard/user';
 
 import api from '../Services/ParentControlService';
 
+const moment = require('moment');
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -66,31 +68,21 @@ export default function User() {
                   headLabel={TABLE_HEAD}
                 />
                 <TableBody>
-                  {users.slice(10).map((row) => {
-                    console.log(row)
-                    const { fname, lname, email, role, lastLogin, id } = row;
-                    console.log(row)
-                    console.log(fname, lname, email, role, lastLogin, id)
-
-                    return (
+                  {users.slice(10).map((row) => (
                       <TableRow
                         hover
-                        key={id}
+                      key={row._id}
                         tabIndex={-1}
                         role="checkbox"
                       >
-                        <TableCell align="left">{fname}</TableCell>
-                        <TableCell align="left">{lname}</TableCell>
-                        <TableCell align="left">{email}</TableCell>
-                        <TableCell align="left">{role}</TableCell>
-                        <TableCell align="left">{lastLogin}</TableCell>
+                      <TableCell align="left">{row.first_name}</TableCell>
+                      <TableCell align="left">{row.last_name}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.role}</TableCell>
+                      <TableCell align="left">{moment(row.last_login).format('dddd, MMMM Do YYYY, h:mm:ss a')}</TableCell>
                       </TableRow>
-                    );
-                  })}
-
+                  ))}
                 </TableBody>
-
-
               </Table>
             </TableContainer>
           </Scrollbar>

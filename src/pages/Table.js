@@ -11,6 +11,8 @@ import {
     Typography,
     Button
 } from '@mui/material';
+
+import { Container } from '@mui/system';
 import { saveAs } from "file-saver";
 
 import api from '../Services/ParentControlService';
@@ -57,12 +59,13 @@ export default function BasicTable() {
     };
 
     return (
-        <TableContainer component={Paper}>
+        <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5} mt={10}>
                 <Typography variant="h4" gutterBottom>
                     Available Files
                 </Typography>
             </Stack>
+            <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
@@ -95,5 +98,6 @@ export default function BasicTable() {
                 </TableBody>
             </Table>
         </TableContainer>
+        </Container>
     );
 }

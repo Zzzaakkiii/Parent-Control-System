@@ -17,7 +17,7 @@ export default function DashboardApp() {
   // const theme = useTheme();
 
   return (
-    <Page title="Dashboard">
+    <Page title="Dashboard" style={{ backgroundColor: "##e8f9fd" }}>
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }} style={{ textAlign: "center" }}>
           Hi, Welcome to PCS
