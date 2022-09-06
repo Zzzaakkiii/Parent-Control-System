@@ -37,9 +37,10 @@ export default function NotificationsPopover() {
   const anchorRef = useRef(null);
 
   const [notifications, setNotifications] = useState([]);
+  const [activityNotifications, setActivityNotifications] = useState([]);
 
   const changeTimer = () => {
-    if (timer < 100000) timer *= 10;
+    if (timer < 10000) timer *= 10;
   }
 
   useEffect(() => {
@@ -52,8 +53,24 @@ export default function NotificationsPopover() {
       setNotifications(data.data.msg);
     }
 
+    const fetchActivityNotifications = async () => {
+      try {
+        const data = await api.get("v1/get/admin/notification", {
+          headers: {
+            authorization: 'Bearer '.concat(_token),
+          },
+        });
+
+        setActivityNotifications(data.data.msg);
+      }
+      catch (err) {
+        console.log(err);
+      }
+    }
+
     const interval = setInterval(() => {
       fetchNotifications();
+      fetchActivityNotifications();
       changeTimer();
     }, timer);
 
@@ -62,7 +79,7 @@ export default function NotificationsPopover() {
     };
   })
 
-  const totalUnRead = notifications.length;
+  const totalUnRead = notifications.length + activityNotifications.length;
 
   const [open, setOpen] = useState(null);
 
@@ -126,12 +143,25 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                Approvals
               </ListSubheader>
             }
           >
             {notifications.map((notification) => (
               <NotificationItem key={notification._id} notification={notification} />
+            ))}
+          </List>
+
+          <List
+            disablePadding
+            subheader={
+              <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                User Activity
+              </ListSubheader>
+            }
+          >
+            {activityNotifications.map((notification) => (
+              < ActivityItem key={notification._id} notification={notification} />
             ))}
           </List>
         </Scrollbar>
@@ -251,4 +281,47 @@ function NotificationItem({ notification }) {
 }
 
 // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
+ActivityItem.propTypes = {
+  notification: PropTypes.shape({
+    activity: PropTypes.string,
+    user: PropTypes.object,
+    file_name: PropTypes.string,
+    created_at: PropTypes.string,
+    role: PropTypes.string,
+    updated_at: PropTypes.string,
+    _id: PropTypes.string,
+  }),
+};
+
+function ActivityItem({ notification }) {
+  return (
+    <ListItemButton
+      sx={{
+        py: 1.5,
+        px: 2.5,
+        mt: '1px',
+      }}
+      onClick={(e) => { e.preventDefault(); }}
+    >
+      <ListItemText
+        primary={`${notification.user.first_name} has recntly ${notification.activity} file: ${notification.file_name}`}
+        secondary={
+          <Typography
+            variant="caption"
+            sx={{
+              mt: 0.5,
+              display: 'flex',
+              alignItems: 'center',
+              color: 'text.disabled',
+            }}
+          >
+            <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
+            {fToNow(notification.created_at)}
+          </Typography>
+        }
+      />
+    </ListItemButton>
+  );
+}
