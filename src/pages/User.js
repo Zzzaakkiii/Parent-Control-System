@@ -73,7 +73,7 @@ export default function User({ token }) {
                   headLabel={TABLE_HEAD}
                 />
                 <TableBody>
-                  {users.slice(10).map((row) => (
+                  {users.map((row) => (
                       <TableRow
                         hover
                       key={row._id}

@@ -153,7 +153,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.map((notification) => (
+            {notifications.slice(-5).map((notification) => (
               <NotificationItem key={notification._id} notification={notification} />
             ))}
           </List>
@@ -166,7 +166,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {activityNotifications.map((notification, index) => (
+            {activityNotifications.slice(-5).map((notification, index) => (
               < ActivityItem key={notification._id} notification={notification} index={index} removeItem={removeItem} />
             ))}
           </List>
