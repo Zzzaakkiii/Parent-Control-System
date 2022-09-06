@@ -28,6 +28,8 @@ import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
 
 import api from '../../Services/ParentControlService';
+
+const moment = require('moment');
 // ----------------------------------------------------------------------
 
 const _token = localStorage.getItem("token");
@@ -100,6 +102,10 @@ export default function NotificationsPopover() {
     );
   };
 
+  const removeItem = index => {
+    activityNotifications.splice(index);
+  }
+
   return (
     <>
       <IconButton
@@ -160,8 +166,8 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {activityNotifications.map((notification) => (
-              < ActivityItem key={notification._id} notification={notification} />
+            {activityNotifications.map((notification, index) => (
+              < ActivityItem key={notification._id} notification={notification} index={index} removeItem={removeItem} />
             ))}
           </List>
         </Scrollbar>
@@ -293,9 +299,28 @@ ActivityItem.propTypes = {
     updated_at: PropTypes.string,
     _id: PropTypes.string,
   }),
+
+  index: PropTypes.number,
+  removeItem: PropTypes.func,
 };
 
-function ActivityItem({ notification }) {
+function ActivityItem({ notification, index, removeItem }) {
+
+  const [openModal, setOPenModal] = useState(false);
+
+  const handleModalOpen = () => {
+    setOPenModal(true);
+  };
+
+  const handleModalClose = () => {
+    setOPenModal(false);
+  };
+
+  const markAsRead = () => {
+    removeItem(index);
+    handleModalClose();
+  }
+
   return (
     <ListItemButton
       sx={{
@@ -303,7 +328,7 @@ function ActivityItem({ notification }) {
         px: 2.5,
         mt: '1px',
       }}
-      onClick={(e) => { e.preventDefault(); }}
+      onClick={(e) => { e.preventDefault(); handleModalOpen(); }}
     >
       <ListItemText
         primary={`${notification.user.first_name} has recntly ${notification.activity} file: ${notification.file_name}`}
@@ -322,6 +347,26 @@ function ActivityItem({ notification }) {
           </Typography>
         }
       />
+      <Dialog
+        open={openModal}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleModalClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{'Activity details'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            <span>User: {notification.user.first_name}</span><br />
+            <span>Activity: {notification.activity}</span><br />
+            <span>File: {notification.file_name}</span><br />
+            <span>Activity Time: {moment(notification.created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')}</span>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={markAsRead}>Mark Read</Button>
+        </DialogActions>
+      </Dialog>
     </ListItemButton>
   );
 }
