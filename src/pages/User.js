@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 // material
 import {
   Card,
@@ -31,25 +32,29 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 
-const _token = localStorage.getItem("token");
+// const _token = localStorage.getItem("token");
 
 // ----------------------------------------------------------------------
 
-export default function User() {
+User.propTypes = {
+  token: PropTypes.string,
+};
+
+export default function User({ token }) {
 
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const fetchLatestLogins = async () => {
       const data = await api.get("v1/recent/user", {
         headers: {
-          authorization: 'Bearer '.concat(_token),
+          authorization: 'Bearer '.concat(token),
         },
       });
       setUsers(data.data.msg)
     }
 
     fetchLatestLogins()
-  }, [])
+  })
 
   return (
     <Page title="User">

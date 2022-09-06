@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,10 +18,14 @@ import { saveAs } from "file-saver";
 
 import api from '../Services/ParentControlService';
 
-const _token = localStorage.getItem("token");
+// const _token = localStorage.getItem("token");
 let timer = 1000;
 
-export default function BasicTable() {
+BasicTable.propTypes = {
+    token: PropTypes.string,
+};
+
+export default function BasicTable({ token }) {
     const [files, setFiles] = useState([]);
 
     const changeTimer = () => {
@@ -31,7 +36,7 @@ export default function BasicTable() {
         const fetchFiles = async () => {
             const data = await api.get("v1/get/file", {
                 headers: {
-                    authorization: 'Bearer '.concat(_token),
+                    authorization: 'Bearer '.concat(token),
                 },
             });
             setFiles(data.data.msg)

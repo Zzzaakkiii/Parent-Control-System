@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography } from '@mui/material';
 // components
 import FileUpload from '../components/FileUpload';
@@ -9,24 +9,27 @@ import User from './User';
 
 // ----------------------------------------------------------------------
 
-const _role = localStorage.getItem("role");
+// const _role = localStorage.getItem("role");
+// const _token = localStorage.getItem("token");
 
 export default function DashboardApp() {
-  const [temp, setTemp] = useState()
+  const [role, setRole] = useState(localStorage.getItem("role"))
+  const [token, setToken] = useState(localStorage.getItem("token"))
+
   useEffect(() => {
-    setTemp(_role);
-    console.log(temp)
-  }, [temp])
+    setRole(localStorage.getItem('role'));
+    setToken(localStorage.getItem('token'))
+  }, [role, token]);
 
   return (
-    <Page title="Dashboard" style={{ backgroundColor: "##e8f9fd" }}>
+    <Page title="Dashboard" style={{ backgroundColor: "#e8f9fd" }}>
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }} style={{ textAlign: "center" }}>
           Hi, Welcome to PCS
         </Typography>
-        {_role === "admin" && <FileUpload />}
-        <Table />
-        {_role === "admin" && <User />}
+        {role === "admin" && <FileUpload />}
+        {token && <Table token={token} />}
+        {role === "admin" && <User token={token} />}
       </Container>
     </Page>
   );
