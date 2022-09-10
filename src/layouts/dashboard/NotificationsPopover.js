@@ -32,7 +32,7 @@ import api from '../../Services/ParentControlService';
 const moment = require('moment');
 // ----------------------------------------------------------------------
 
-const _token = localStorage.getItem("token");
+// const _token = localStorage.getItem("token");
 let timer = 1000;
 
 export default function NotificationsPopover() {
@@ -49,7 +49,7 @@ export default function NotificationsPopover() {
     const fetchNotifications = async () => {
       const data = await api.get("v2/unverified/users", {
         headers: {
-          authorization: 'Bearer '.concat(_token),
+          authorization: 'Bearer '.concat(localStorage.getItem("token")),
         },
       });
       setNotifications(data.data.msg);
@@ -59,7 +59,7 @@ export default function NotificationsPopover() {
       try {
         const data = await api.get("v1/get/admin/notification", {
           headers: {
-            authorization: 'Bearer '.concat(_token),
+            authorization: 'Bearer '.concat(localStorage.getItem("token")),
           },
         });
 
@@ -220,7 +220,7 @@ function NotificationItem({ notification }) {
       try {
         const data = await api.put("v2/update/user/status", request, {
           headers: {
-            authorization: 'Bearer '.concat(_token),
+            authorization: 'Bearer '.concat(localStorage.getItem("token")),
           }
         });
         return data;

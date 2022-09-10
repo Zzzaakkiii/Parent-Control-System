@@ -39,7 +39,7 @@ DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
 };
 
-const _role = localStorage.getItem("role");
+// const _role = localStorage.getItem("role");
 
 export default function DashboardNavbar({ onOpenSidebar }) {
   return (
@@ -52,7 +52,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          {_role === "admin" && <NotificationsPopover />}
+          {localStorage.getItem("role") === "admin" && <NotificationsPopover />}
           <AccountPopover />
         </Stack>
       </ToolbarStyle>

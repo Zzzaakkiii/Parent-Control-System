@@ -29,14 +29,14 @@ export default function BasicTable({ token }) {
     const [files, setFiles] = useState([]);
 
     const changeTimer = () => {
-        if (timer < 100000) timer *= 100;
+        if (timer < 100000) timer *= 10;
     }
 
     useEffect(() => {
         const fetchFiles = async () => {
             const data = await api.get("v1/get/file", {
                 headers: {
-                    authorization: 'Bearer '.concat(token),
+                    authorization: 'Bearer '.concat(localStorage.getItem("token")),
                 },
             });
             setFiles(data.data.msg)
