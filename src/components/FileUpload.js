@@ -4,7 +4,7 @@ import { Dropzone, FileItem } from "@dropzone-ui/react";
 
 import api from '../Services/ParentControlService';
 
-const _token = localStorage.getItem("token");
+// const _token = localStorage.getItem("token");
 
 const FileUpload = () => {
     const [files, setFiles] = React.useState([]);
@@ -14,11 +14,12 @@ const FileUpload = () => {
         formData.append("file", incommingFiles[0].file);
         formData.append("name", incommingFiles[0].file.name);
 
+
         const uploadFile = async () => {
             try {
                 const data = await api.post("v1/add/file", formData, {
                     headers: {
-                        authorization: 'Bearer '.concat(_token)
+                        authorization: 'Bearer '.concat(localStorage.getItem("token")),
                     },
                 });
 
