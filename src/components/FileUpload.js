@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import uuid from 'react-uuid';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
 
@@ -7,7 +7,8 @@ import api from '../Services/ParentControlService';
 // const _token = localStorage.getItem("token");
 
 const FileUpload = () => {
-    const [files, setFiles] = React.useState([]);
+    const [files, setFiles] = useState([]);
+    const [fileUploaded, setFileUploaded] = useState(false);
     const updateFiles = (incommingFiles) => {
         setFiles(incommingFiles);
         const formData = new FormData();
@@ -23,7 +24,8 @@ const FileUpload = () => {
                     },
                 });
 
-                console.log(data);
+                setFileUploaded(true)
+                setFiles([])
                 return data;
             }
             catch (err) {
@@ -32,7 +34,7 @@ const FileUpload = () => {
             return 0;
         }
 
-        uploadFile();
+        uploadFile()
     };
     return (
         <>
@@ -42,6 +44,7 @@ const FileUpload = () => {
                     <FileItem {...file} preview key={uuid()} />
                 ))}
             </Dropzone>
+            {fileUploaded && <div style={{ "color": "green", "width": "100%", "display": "flex", "justifyContent": "center" }}>File Uploaded Successfully!</div>}
         </>
     );
 }
