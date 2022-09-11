@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, IconButton, InputAdornment } from '@mui/material';
+import { Stack, IconButton, InputAdornment, Select, MenuItem, InputLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/Iconify';
@@ -23,6 +23,7 @@ export default function RegisterForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [dept, setDepartment] = useState("");
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().required('First name required'),
@@ -36,6 +37,7 @@ export default function RegisterForm() {
     lastName: '',
     email: '',
     password: '',
+    department: ''
   };
 
   const methods = useForm({
@@ -60,12 +62,18 @@ export default function RegisterForm() {
     }
   }
 
+  const handleDepartmentChange = e => {
+    setDepartment(e.target.value)
+    console.log(e.target.value)
+  }
+
   const signup = async (values) => {
     const request = {
       first_name: values.firstName,
       last_name: values.lastName,
       email: values.email,
-      password: values.password
+      password: values.password,
+      department: dept
     };
 
     try {
@@ -108,6 +116,19 @@ export default function RegisterForm() {
             ),
           }}
         />
+
+        <InputLabel id="select-label">Department</InputLabel>
+        <Select
+          labelId="select-label"
+          id="simple-select"
+          value={dept}
+          onChange={handleDepartmentChange}
+        >
+          <MenuItem value="Accounts">Accounts</MenuItem>
+          <MenuItem value="Marketing">Marketing</MenuItem>
+          <MenuItem value="Sales">Sales</MenuItem>
+          <MenuItem value="Operations">Operations</MenuItem>
+        </Select>
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
           Register
