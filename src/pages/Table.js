@@ -34,7 +34,8 @@ export default function BasicTable({ token }) {
 
     useEffect(() => {
         const fetchFiles = async () => {
-            const data = await api.get("v1/get/file", {
+            const endpoint = localStorage.getItem("role") === "admin" ? "api/v1/get/admin/file" : "v1/get/file";
+            const data = await api.get(endpoint, {
                 headers: {
                     authorization: 'Bearer '.concat(localStorage.getItem("token")),
                 },
