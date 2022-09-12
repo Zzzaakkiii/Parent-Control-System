@@ -123,6 +123,7 @@ export default function RegisterForm() {
           id="simple-select"
           value={dept}
           onChange={handleDepartmentChange}
+          required
         >
           <MenuItem value="Accounts">Accounts</MenuItem>
           <MenuItem value="Marketing">Marketing</MenuItem>
